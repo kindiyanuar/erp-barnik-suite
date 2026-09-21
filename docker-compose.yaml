@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: erp-barnik-backend:latest
     restart: always
     environment:
       - SITE_NAME=erp.luthfibarnik.com
@@ -19,9 +20,7 @@ services:
       - redis-queue
 
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: frappe/erpnext:v15.121.3
     restart: always
     command:
       - nginx-entrypoint.sh
@@ -40,9 +39,7 @@ services:
       - backend
 
   websocket:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: erp-barnik-backend:latest
     restart: always
     command:
       - node
@@ -50,12 +47,11 @@ services:
     volumes:
       - sites:/home/frappe/frappe-bench/sites
     depends_on:
+      - backend
       - redis-cache
 
   queue-default:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: erp-barnik-backend:latest
     restart: always
     command:
       - bench
@@ -65,6 +61,7 @@ services:
     volumes:
       - sites:/home/frappe/frappe-bench/sites
     depends_on:
+      - backend
       - redis-queue
       - db
 

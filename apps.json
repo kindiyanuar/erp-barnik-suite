@@ -1,0 +1,10 @@
+[
+  {
+    "url": "https://github.com/kindiyanuar/erpnext",
+    "branch": "version-15"
+  },
+  {
+    "url": "https://github.com/kindiyanuar/hrms",
+    "branch": "version-15"
+  }
+]

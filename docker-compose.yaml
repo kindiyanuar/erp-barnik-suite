@@ -81,8 +81,8 @@ services:
       - --skip-character-set-client-handshake
       - --skip-innodb-read-only-compressed
     environment:
-      - MYSQL_ROOT_PASSWORD=erp-barnik
-      - MARIADB_ROOT_PASSWORD=barnik@2026
+      - MYSQL_ROOT_PASSWORD=admin
+      - MARIADB_ROOT_PASSWORD=admin
     volumes:
       - db-data:/var/lib/mysql
 

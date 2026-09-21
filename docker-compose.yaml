@@ -2,7 +2,9 @@ version: "3.7"
 
 services:
   backend:
-    image: frappe/erpnext:v15.121.3
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     environment:
       - SITE_NAME=erp.luthfibarnik.com
@@ -17,7 +19,9 @@ services:
       - redis-queue
 
   frontend:
-    image: frappe/erpnext:v15.121.3
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     command:
       - nginx-entrypoint.sh
@@ -36,7 +40,9 @@ services:
       - backend
 
   websocket:
-    image: frappe/erpnext:v15.121.3
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     command:
       - node
@@ -47,7 +53,9 @@ services:
       - redis-cache
 
   queue-default:
-    image: frappe/erpnext:v15.121.3
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     command:
       - bench

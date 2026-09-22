@@ -1,14 +1,14 @@
 [
   {
     "url": "https://github.com/kindiyanuar/erpnext",
-    "branch": "version-15"
+    "branch": "version-16"
   },
   {
     "url": "https://github.com/kindiyanuar/hrms",
-    "branch": "version-15"
+    "branch": "version-16"
   },
   {
     "url": "https://github.com/kindiyanuar/lms",
-    "branch": "version-15"
+    "branch": "version-16"
   }
 ]

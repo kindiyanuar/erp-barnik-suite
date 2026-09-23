@@ -1,22 +1,107 @@
-FROM frappe/erpnext:version-16
+version: "3.7"
 
-USER frappe
-WORKDIR /home/frappe/frappe-bench
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - SITE_NAME=erp.luthfibarnik.com
+      - DB_ROOT_PASSWORD=@AdministratorBarnik2026!
+      - ADMIN_PASSWORD=@AdministratorBarnik2026!
+      - INSTALL_APPS=erpnext,payments,hrms,lms
+      - REDIS_CACHE=redis-cache:6379
+      - REDIS_QUEUE=redis-queue:6379
+      - REDIS_SOCKETIO=redis-cache:6379
+    volumes:
+      - sites-fresh:/home/frappe/frappe-bench/sites
+    depends_on:
+      - db
+      - redis-cache
+      - redis-queue
 
-# 1. Clone aplikasi branch version-16 langsung via git
-RUN git clone --depth 1 -b version-16 https://github.com/frappe/payments.git ./apps/payments \
-    && git clone --depth 1 -b version-16 https://github.com/kindiyanuar/hrms.git ./apps/hrms \
-    && git clone --depth 1 -b version-16 https://github.com/kindiyanuar/lms.git ./apps/lms
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    command:
+      - nginx-entrypoint.sh
+    environment:
+      - BACKEND=backend:8000
+      - SOCKETIO=websocket:9000
+      - UPSTREAM_REAL_IP_ADDRESS=127.0.0.1
+      - UPSTREAM_REAL_IP_HEADER=X-Forwarded-For
+      - UPSTREAM_REAL_IP_RECURSIVE=off
+      - PROXY_READ_TIMEOUT=120
+      - CLIENT_MAX_BODY_SIZE=50m
+    volumes:
+      - sites-fresh:/home/frappe/frappe-bench/sites
+    depends_on:
+      - backend
 
-# 2. Pasang package python langsung menggunakan pip milik virtualenv bench
-RUN ./env/bin/pip install --no-cache-dir -e ./apps/payments \
-    && ./env/bin/pip install --no-cache-dir -e ./apps/hrms \
-    && ./env/bin/pip install --no-cache-dir -e ./apps/lms
+  websocket:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    command:
+      - node
+      - /home/frappe/frappe-bench/apps/frappe/socketio.js
+    environment:
+      - REDIS_CACHE=redis-cache:6379
+    volumes:
+      - sites-fresh:/home/frappe/frappe-bench/sites
+    depends_on:
+      - redis-cache
 
-# 3. Daftarkan aplikasi ke file apps.txt bawaan bench
-RUN echo "payments" >> ./sites/apps.txt \
-    && echo "hrms" >> ./sites/apps.txt \
-    && echo "lms" >> ./sites/apps.txt
+  queue-default:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    command:
+      - bench
+      - worker
+      - --queue
+      - default
+    environment:
+      - REDIS_QUEUE=redis-queue:6379
+    volumes:
+      - sites-fresh:/home/frappe/frappe-bench/sites
+    depends_on:
+      - redis-queue
+      - db
 
-# 4. Instal dependensi JavaScript tambahan (html2canvas) secara permanen untuk hrms
-RUN yarn --cwd ./apps/hrms add html2canvas
+  redis-cache:
+    image: redis:6.2-alpine
+    restart: always
+    volumes:
+      - redis-cache-data-fresh:/data
+
+  redis-queue:
+    image: redis:6.2-alpine
+    restart: always
+    volumes:
+      - redis-queue-data-fresh:/data
+
+  db:
+    image: mariadb:10.6
+    restart: always
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+      - --skip-innodb-read-only-compressed
+    environment:
+      - MYSQL_ROOT_PASSWORD=@AdministratorBarnik2026!
+      - MARIADB_ROOT_PASSWORD=@AdministratorBarnik2026!
+    volumes:
+      - db-data-fresh:/var/lib/mysql
+
+volumes:
+  db-data-fresh:
+  redis-cache-data-fresh:
+  redis-queue-data-fresh:
+  sites-fresh:

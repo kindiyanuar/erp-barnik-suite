@@ -17,3 +17,6 @@ RUN ./env/bin/pip install --no-cache-dir -e ./apps/payments \
 RUN echo "payments" >> ./sites/apps.txt \
     && echo "hrms" >> ./sites/apps.txt \
     && echo "lms" >> ./sites/apps.txt
+
+# 4. Instal dependensi JavaScript tambahan (html2canvas) secara permanen untuk hrms
+RUN yarn --cwd ./apps/hrms add html2canvas

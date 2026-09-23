@@ -11,6 +11,8 @@ services:
       - DB_ROOT_PASSWORD=@AdministratorBarnik2026!
       - ADMIN_PASSWORD=@AdministratorBarnik2026!
       - INSTALL_APPS=erpnext,payments,hrms,lms
+      - REDIS_CACHE=redis-cache:6379
+      - REDIS_QUEUE=redis-queue:6379
     volumes:
       - sites:/home/frappe/frappe-bench/sites
     depends_on:
@@ -46,6 +48,8 @@ services:
     command:
       - node
       - /home/frappe/frappe-bench/apps/frappe/socketio.js
+    environment:
+      - REDIS_CACHE=redis-cache:6379
     volumes:
       - sites:/home/frappe/frappe-bench/sites
     depends_on:
@@ -61,6 +65,8 @@ services:
       - worker
       - --queue
       - default
+    environment:
+      - REDIS_QUEUE=redis-queue:6379
     volumes:
       - sites:/home/frappe/frappe-bench/sites
     depends_on:

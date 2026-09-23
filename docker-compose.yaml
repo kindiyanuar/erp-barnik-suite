@@ -10,7 +10,7 @@ services:
       - SITE_NAME=erp.luthfibarnik.com
       - DB_ROOT_PASSWORD=admin
       - ADMIN_PASSWORD=admin
-      - INSTALL_APPS=erpnext,payments,hrms,lms
+      - INSTALL_APPS=erpnext,payments,hrms,lms,wiki
     volumes:
       - sites:/home/frappe/frappe-bench/sites
     depends_on:

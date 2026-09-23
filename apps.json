@@ -10,5 +10,9 @@
   {
     "url": "https://github.com/kindiyanuar/lms",
     "branch": "version-16"
+  },
+  {
+    "url": "https://github.com/frappe/wiki",
+    "branch": "version-16"
   }
 ]
